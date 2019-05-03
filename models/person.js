@@ -4,15 +4,16 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var personSchema = Schema({
-    firstName: String,
+    firstName: String, //firstName , firstLastName, birthname, religion, gender
     middleName: String,
-    firstLastName: String,
+    firstLastName: String, 
     secondLastName: String,
     marriedName: String,
     birthname: Date,
     religion: String,
-    email: String,
+    email: [String],
     gender: String,
+    civilStatus: String,
     address: Object,
     department: String,
     municipality: String,
@@ -22,10 +23,12 @@ var personSchema = Schema({
     street: String,
     sector: String,
     number: String,
+    other: String,
+    /**------------------------------------------------------------------------------------------------------------------------------------------------ */
     phones: Object,
-    cellphone: String,
-    house: String,
-    other: String
+    cellphone: Number,
+    house: Number,
+    otherNumber: Object
 });
 
 module.exports = mongoose.model('Person', personSchema);

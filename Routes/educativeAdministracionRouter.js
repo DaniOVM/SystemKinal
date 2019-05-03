@@ -1,7 +1,7 @@
 'use stric';
 
 var express = require('express');
-var educativeAdministracionController = require('../Controllers/educativeAdministracionController');
+var educativeAdministracionController = require('../Controllers/EducAdminController/educativeAdministracionController');
 var api = express.Router();
 
 api.post('/Save-Units-Academic', educativeAdministracionController.addAcademicUnits);
