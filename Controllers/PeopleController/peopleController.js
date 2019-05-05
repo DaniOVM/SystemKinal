@@ -1,8 +1,8 @@
 'use strict';
 var Person = require('../../models/person');
 var emailCorrect = /^(?:[^<>()[\].,;:\s@"]+(\.[^<>()[\].,;:\s@"]+)*|"[^\n"]+")@(?:[^<>()[\].,;:\s@"]+\.)+[^<>()[\]\.,;:\s@"]{2,63}$/i
-var comprobar = Boolean;
-var comprobarfalse = Boolean;
+var comprobar = false;
+var comprobarfalse = true;
 function Prueba(req,res){
     res.status(200).send({message: 'Probando el Servidor'})
 }
@@ -31,33 +31,41 @@ function addPerson(req,res){
                                 if(emailCorrect.test(element)){
                                     console.log('El correo esta corecto');
                                     comprobar = true;
+                                    console.log('--------------------------------')
                                 }else{
+                                    if(!emailCorrect.test(element)){
                                         console.log('Los correos no estan correctos');
-                                        comprobarfalse = true;
+                                        comprobarfalse = false;
+                                        console.log('--------------------------------')
+                                    }
+                                        
                                 } 
                             });
-                            
                         }
-                        if(comprobar == true){
-                            Person.insertMany({'firstName': params.firstName, 'middleName': params.middleName, 'firstLastName': params.firstLastName, 'secondLastName': params.secondLastName, 'marriedName': params.marriedName, 'birthname': params.birthname,
-                                    'religion': params.religion,'email': params.email,'gender': params.gender, 'civil status': params.civilStatus, 
-                                    'address': {'department': params.department,'municipality': params.municipality,'zone': params.zone,'residential': params.residential,'avenue': params.avenue,
-                                    'street': params.street,'sector':params.sector, 'number':params.number, 'other':params.other},
-                                    'phones':{'cellphone': params.cellphone, 'house': params.house,'otherNumber':params.otherNum}},(err,person)=>{
-                                        if(err){
-                                            res.status(500).send({message:'error al guardar'});
-                                        }else{
-                                            if(!person){
-                                                res.status(404).send({message:'NO se pudo guardar'});
-                                            }else{
-                                                res.status(200).send({Persona: person});
-                                            }
-                                        }
-                                    });
+                        if(comprobar == true && comprobarfalse == false){
+                            res.status(500).send({message: 'Los correos no fueron ingresados correctamente'});
+                            comprobarfalse = true
+                            comprobar = false
                         }else{
-                            if(comprobarfalse == true){
-                                res.status(500).send({message: 'Los correos no fueron ingresados correctamente'})
-                            }
+                            Person.insertMany({'firstName': params.firstName, 'middleName': params.middleName, 'firstLastName': params.firstLastName, 'secondLastName': params.secondLastName, 'marriedName': params.marriedName, 'birthname': params.birthname,
+                            'religion': params.religion,'email': params.email,'gender': params.gender, 'civil status': params.civilStatus, 
+                            'address': {'department': params.department,'municipality': params.municipality,'zone': params.zone,'residential': params.residential,'avenue': params.avenue,
+                            'street': params.street,'sector':params.sector, 'number':params.number, 'other':params.other},
+                            'phones':{'cellphone': params.cellphone, 'house': params.house,'otherNumber':params.otherNum}},(err,person)=>{
+                                if(err){
+                                    res.status(500).send({message:'error al guardar'});
+                                }else{
+                                    if(!person){
+                                        res.status(404).send({message:'NO se pudo guardar'});
+                                    }else{
+                                        res.status(200).send({Persona: person});
+                                        comprobar = false
+                                        comprobarfalse = true
+                                    }
+                                }
+                            });
+                               
+                            
                            
                         }
                     }
