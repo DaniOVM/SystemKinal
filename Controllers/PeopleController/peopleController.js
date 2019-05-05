@@ -1,34 +1,72 @@
 'use strict';
 var Person = require('../../models/person');
-
+var emailCorrect = /^(?:[^<>()[\].,;:\s@"]+(\.[^<>()[\].,;:\s@"]+)*|"[^\n"]+")@(?:[^<>()[\].,;:\s@"]+\.)+[^<>()[\]\.,;:\s@"]{2,63}$/i
+var comprobar = Boolean;
+var comprobarfalse = Boolean;
 function Prueba(req,res){
     res.status(200).send({message: 'Probando el Servidor'})
 }
 function addPerson(req,res){
     var person = new Person();
     var params = req.body;
-
+    var email = params.email;
+    
     if (params.firstName  && params.firstLastName  && params.birthname &&params.civilStatus && params.religion && params.gender && params.department && params.municipality && params.zone){
-        if(params.gender == 'Femenino' && params.marriedName == '' && params.civilStatus == 'CASADA'){
+        if(params.gender == 'FEMENINO' && params.marriedName == '' && params.civilStatus == 'CASADA'){
             res.status(500).send({message: 'Debe de ingresar el apellido de casada'});
         }else{
-            
-        }
-        Person.insertMany({'firstName': params.firstName, 'middleName': params.middleName, 'firstLastName': params.firstLastName, 'secondLastName': params.secondLastName, 'marriedName': params.marriedName, 'birthname': params.birthname,
-        'religion': params.religion,'email': params.email,'gender': params.gender, 'civil status': params.civilStatus, 
-        'address': {'department': params.department,'municipality': params.municipality,'zone': params.zone,'residential': params.residential,'avenue': params.avenue,
-        'street': params.street,'sector':params.sector, 'number':params.number, 'other':params.other},
-        'phones':{'cellphone': params.cellphone, 'house': params.house,'otherNumber':params.otherNum}},(err,person)=>{
-            if(err){
-                res.status(500).send({message:'error al guardar'});
+            if(params.marriedName != '' && params.gender == 'MASCULINO' && params.civilStatus == 'CASADO' && params.civilStatus == 'SOLTERO'){
+                res.status(500).send({message: 'El genero de masculino no tiene apellido de Casada'});
             }else{
-                if(!person){
-                    res.status(404).send({message:'NO se pudo guardar'});
+                if(params.marriedName != '' && params.gender == 'FEMENINO' && params.civilStatus == 'SOLTERA'){
+                    res.status(500).send({message: 'El estado civil SOLTERA, no tiene apeliido de casda'});
                 }else{
-                    res.status(200).send({Persona: person});
+                    if(params.gender == 'MASCULINO' && params.civilStatus == 'SOLTERA' && params.civilStatus == 'CASADA'){
+                        res.status(500).send({message: 'El estado civil en Masculino tiene que terminar en SOLETERO Ó CASADO'});
+                    }else{
+                        if(params.gender == 'FEMENINO' && params.civilStatus == 'SOLTERO' && params.civilStatus == 'CASADO'){
+                            res.status(500).send({message: 'El estado civil en FEMENINO tiene que ser SOLTERA o CASADA'});
+                        }else{
+                            email.forEach(element => {
+                                if(emailCorrect.test(element)){
+                                    console.log('El correo esta corecto');
+                                    comprobar = true;
+                                }else{
+                                        console.log('Los correos no estan correctos');
+                                        comprobarfalse = true;
+                                } 
+                            });
+                            
+                        }
+                        if(comprobar == true){
+                            Person.insertMany({'firstName': params.firstName, 'middleName': params.middleName, 'firstLastName': params.firstLastName, 'secondLastName': params.secondLastName, 'marriedName': params.marriedName, 'birthname': params.birthname,
+                                    'religion': params.religion,'email': params.email,'gender': params.gender, 'civil status': params.civilStatus, 
+                                    'address': {'department': params.department,'municipality': params.municipality,'zone': params.zone,'residential': params.residential,'avenue': params.avenue,
+                                    'street': params.street,'sector':params.sector, 'number':params.number, 'other':params.other},
+                                    'phones':{'cellphone': params.cellphone, 'house': params.house,'otherNumber':params.otherNum}},(err,person)=>{
+                                        if(err){
+                                            res.status(500).send({message:'error al guardar'});
+                                        }else{
+                                            if(!person){
+                                                res.status(404).send({message:'NO se pudo guardar'});
+                                            }else{
+                                                res.status(200).send({Persona: person});
+                                            }
+                                        }
+                                    });
+                        }else{
+                            if(comprobarfalse == true){
+                                res.status(500).send({message: 'Los correos no fueron ingresados correctamente'})
+                            }
+                           
+                        }
+                    }
+                    
                 }
+                
             }
-        })
+        }
+        
     }else{
         res.status(500).send({message: 'Ingrese todos los datos'});
     }
@@ -85,11 +123,33 @@ function deletePerson(req,res){
         }
     });    
 }
+function email (req,res){
+    var params = req.body;
+    var email = params.email;
+    var emailcorrect = /^(?:[^<>()[\].,;:\s@"]+(\.[^<>()[\].,;:\s@"]+)*|"[^\n"]+")@(?:[^<>()[\].,;:\s@"]+\.)+[^<>()[\]\.,;:\s@"]{2,63}$/i
+    
+    email.forEach(element => {
+        if(emailcorrect.test(element)){
+            console.log('el correo esta correcto');
+            console.log(element);
+        }else{
+            res.status(500).send({message: 'Error'});
+        }
+    });
+
+
+
+
+
+    
+    
+}
 
 module.exports ={
     Prueba,
     addPerson,
     listPerson,
     updatePerson,
-    deletePerson
+    deletePerson,
+    email
 }
