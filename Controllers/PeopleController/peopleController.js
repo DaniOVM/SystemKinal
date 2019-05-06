@@ -3,6 +3,8 @@ var Person = require('../../models/person');
 var emailCorrect = /^(?:[^<>()[\].,;:\s@"]+(\.[^<>()[\].,;:\s@"]+)*|"[^\n"]+")@(?:[^<>()[\].,;:\s@"]+\.)+[^<>()[\]\.,;:\s@"]{2,63}$/i
 var comprobar = false;
 var comprobarfalse = true;
+var comprobarNumber = false;
+var comprobarNumberfalse = true;
 function Prueba(req,res){
     res.status(200).send({message: 'Probando el Servidor'})
 }
@@ -42,28 +44,52 @@ function addPerson(req,res){
                                 } 
                             });
                         }
+                        var numeroValue = params.otherNum;
                         if(comprobar == true && comprobarfalse == false){
                             res.status(500).send({message: 'Los correos no fueron ingresados correctamente'});
                             comprobarfalse = true
                             comprobar = false
                         }else{
-                            Person.insertMany({'firstName': params.firstName, 'middleName': params.middleName, 'firstLastName': params.firstLastName, 'secondLastName': params.secondLastName, 'marriedName': params.marriedName, 'birthname': params.birthname,
-                            'religion': params.religion,'email': params.email,'gender': params.gender, 'civil status': params.civilStatus, 
-                            'address': {'department': params.department,'municipality': params.municipality,'zone': params.zone,'residential': params.residential,'avenue': params.avenue,
-                            'street': params.street,'sector':params.sector, 'number':params.number, 'other':params.other},
-                            'phones':{'cellphone': params.cellphone, 'house': params.house,'otherNumber':params.otherNum}},(err,person)=>{
-                                if(err){
-                                    res.status(500).send({message:'error al guardar'});
-                                }else{
-                                    if(!person){
-                                        res.status(404).send({message:'NO se pudo guardar'});
+                            if(params.cellphone.toString().length == 8 && params.house.toString().length == 8){
+                                numeroValue.forEach(element => {
+                                    if(element.toString().length == 8){
+                                        console.log('El numero si tiene 8 digitos');
+                                        comprobarNumber = true;
                                     }else{
-                                        res.status(200).send({Persona: person});
-                                        comprobar = false
-                                        comprobarfalse = true
+                                        console.log('El numero no tiene 8 digitos');
+                                        comprobarNumberfalse = false;
                                     }
-                                }
-                            });
+                                });
+                                
+                            }else{
+                                res.status(500).send({message: 'Tiene que tener ocho digitos'});
+                            }
+                            if(comprobarNumber == true && comprobarNumberfalse == false){
+                                res.status(500).send({message: 'El numero tiene mas de ocho digitos'});
+                                comprobarNumber = false
+                                comprobarNumberfalse = true
+                            }else{
+                                Person.insertMany({'firstName': params.firstName, 'middleName': params.middleName, 'firstLastName': params.firstLastName, 'secondLastName': params.secondLastName, 'marriedName': params.marriedName, 'birthname': params.birthname,
+                                'religion': params.religion,'email': params.email,'gender': params.gender, 'civil status': params.civilStatus, 
+                                'address': {'department': params.department,'municipality': params.municipality,'zone': params.zone,'residential': params.residential,'avenue': params.avenue,
+                                'street': params.street,'sector':params.sector, 'number':params.number, 'other':params.other},
+                                'phones':{'cellphone': params.cellphone, 'house': params.house,'otherNumber':params.otherNum}},(err,person)=>{
+                                    if(err){
+                                        res.status(500).send({message:'error al guardar'});
+                                    }else{
+                                        if(!person){
+                                            res.status(404).send({message:'NO se pudo guardar'});
+                                        }else{
+                                            res.status(200).send({Persona: person});
+                                            comprobar = false;
+                                            comprobarfalse = true;
+                                            comprobarNumber = false;
+                                            comprobarNumberfalse = true;
+                                        }
+                                    }
+                                });
+                            }
+                           
                                
                             
                            
