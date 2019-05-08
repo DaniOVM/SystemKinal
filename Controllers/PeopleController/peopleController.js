@@ -29,70 +29,33 @@ function addPerson(req,res){
                         if(params.gender == 'FEMENINO' && params.civilStatus == 'SOLTERO' && params.civilStatus == 'CASADO'){
                             res.status(500).send({message: 'El estado civil en FEMENINO tiene que ser SOLTERA o CASADA'});
                         }else{
-                            email.forEach(element => {
-                                if(emailCorrect.test(element)){
-                                    console.log('El correo esta corecto');
-                                    comprobar = true;
-                                    console.log('--------------------------------')
+                            Person.insertMany({'firstName': params.firstName, 'middleName': params.middleName, 'firstLastName': params.firstLastName, 'secondLastName': params.secondLastName, 'marriedName': params.marriedName, 'birthname': params.birthname,
+                            'religion': params.religion,'gender': params.gender, 'civil status': params.civilStatus, 
+                            'address': {'department': params.department,'municipality': params.municipality,'zone': params.zone,'residential': params.residential,'avenue': params.avenue,
+                            'street': params.street,'sector':params.sector, 'number':params.number, 'other':params.other},
+                            'phones':{'cellphone': params.cellphone, 'house': params.house}},(err,person)=>{
+                                if(err){
+                                    res.status(500).send({message:'error al guardar'});
                                 }else{
-                                    if(!emailCorrect.test(element)){
-                                        console.log('Los correos no estan correctos');
-                                        comprobarfalse = false;
-                                        console.log('--------------------------------')
+                                    if(!person){
+                                        res.status(404).send({message:'NO se pudo guardar'});
+                                    }else{
+                                            Person.findByIdAndUpdate({_id:person[0]._id},{$push: {email: {$each: params.email}}},(err,emailRes)=>{
+                                                if(err){
+                                                    // res.status(500).send({message: 'Error al guardar email'});
+                                                    console.log(err);
+                                                }else{
+                                                    // res.status(200).send({Person: emailRes});
+                                                    Person.findByIdAndUpdate({_id:person[0]._id},{$push: {otherNumber: {$each: params.otherNumber}}},(err,phoneRes)=>{
+                                                        if(err){
+                                                            console.log(err);
+                                                        }
+                                                    })
+                                                }
+                                            })
                                     }
-                                        
-                                } 
+                                }
                             });
-                        }
-                        var numeroValue = params.otherNum;
-                        if(comprobar == true && comprobarfalse == false){
-                            res.status(500).send({message: 'Los correos no fueron ingresados correctamente'});
-                            comprobarfalse = true
-                            comprobar = false
-                        }else{
-                            if(params.cellphone.toString().length == 8 && params.house.toString().length == 8){
-                                numeroValue.forEach(element => {
-                                    if(element.toString().length == 8){
-                                        console.log('El numero si tiene 8 digitos');
-                                        comprobarNumber = true;
-                                    }else{
-                                        console.log('El numero no tiene 8 digitos');
-                                        comprobarNumberfalse = false;
-                                    }
-                                });
-                                
-                            }else{
-                                res.status(500).send({message: 'Tiene que tener ocho digitos'});
-                            }
-                            if(comprobarNumber == true && comprobarNumberfalse == false){
-                                res.status(500).send({message: 'El numero tiene mas de ocho digitos'});
-                                comprobarNumber = false
-                                comprobarNumberfalse = true
-                            }else{
-                                Person.insertMany({'firstName': params.firstName, 'middleName': params.middleName, 'firstLastName': params.firstLastName, 'secondLastName': params.secondLastName, 'marriedName': params.marriedName, 'birthname': params.birthname,
-                                'religion': params.religion,'email': params.email,'gender': params.gender, 'civil status': params.civilStatus, 
-                                'address': {'department': params.department,'municipality': params.municipality,'zone': params.zone,'residential': params.residential,'avenue': params.avenue,
-                                'street': params.street,'sector':params.sector, 'number':params.number, 'other':params.other},
-                                'phones':{'cellphone': params.cellphone, 'house': params.house,'otherNumber':params.otherNum}},(err,person)=>{
-                                    if(err){
-                                        res.status(500).send({message:'error al guardar'});
-                                    }else{
-                                        if(!person){
-                                            res.status(404).send({message:'NO se pudo guardar'});
-                                        }else{
-                                            res.status(200).send({Persona: person});
-                                            comprobar = false;
-                                            comprobarfalse = true;
-                                            comprobarNumber = false;
-                                            comprobarNumberfalse = true;
-                                        }
-                                    }
-                                });
-                            }
-                           
-                               
-                            
-                           
                         }
                     }
                     
