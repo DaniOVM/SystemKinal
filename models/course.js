@@ -5,7 +5,8 @@ var Schema = mongoose.Schema;
 
 var couserSchema = Schema({
     code: String,
-    name: String
+    name: String,
+    description: String
 });
 
 module.exports = mongoose.model('Course', couserSchema);

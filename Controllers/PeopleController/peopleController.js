@@ -29,10 +29,10 @@ function addPerson(req,res){
                         if(params.gender == 'FEMENINO' && params.civilStatus == 'SOLTERO' && params.civilStatus == 'CASADO'){
                             res.status(500).send({message: 'El estado civil en FEMENINO tiene que ser SOLTERA o CASADA'});
                         }else{
-                            Person.insertMany({'firstName': params.firstName, 'middleName': params.middleName, 'firstLastName': params.firstLastName, 'secondLastName': params.secondLastName, 'marriedName': params.marriedName, 'birthname': params.birthname,
+                            Person.insertMany({'firstName': params.firstName.toUpperCase(), 'middleName': params.middleName.toUpperCase(), 'firstLastName': params.firstLastName.toUpperCase(), 'secondLastName': params.secondLastName.toUpperCase(), 'marriedName': params.marriedName.toUpperCase(), 'birthname': params.birthname,
                             'religion': params.religion,'gender': params.gender, 'civil status': params.civilStatus, 
-                            'address': {'department': params.department,'municipality': params.municipality,'zone': params.zone,'residential': params.residential,'avenue': params.avenue,
-                            'street': params.street,'sector':params.sector, 'number':params.number, 'other':params.other},
+                            'address': {'department': params.department,'municipality': params.municipality.toUpperCase(),'zone': params.zone.toUpperCase(),'residential': params.residential.toUpperCase(),'avenue': params.avenue.toUpperCase(),
+                            'street': params.street.toUpperCase(),'sector':params.sector.toUpperCase(), 'number':params.number.toUpperCase(), 'other':params.other.toUpperCase()},
                             'phones':{'cellphone': params.cellphone, 'house': params.house}},(err,person)=>{
                                 if(err){
                                     res.status(500).send({message:'error al guardar'});
