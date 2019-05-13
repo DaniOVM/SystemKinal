@@ -101,7 +101,7 @@ function addEducationalCareers(req,res){
                                        if(!guardado){
                                            res.status(404).send({message: 'Error en el sistema'});
                                        }else{
-                                           res.status(200).send({Carrera: guardado});
+                                           res.status(200).send({career: guardado});
                                        }
                                    }
                                })
@@ -156,7 +156,7 @@ function listEducationlCareers(req, res){
             if(!buscando){
                 res.status(404).send({message: 'Error de conexion'});
             }else{
-                res.status(200).send({'Carreras educativas': buscando});
+                res.status(200).send({career: buscando});
             }
         }
     });

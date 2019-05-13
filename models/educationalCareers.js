@@ -9,4 +9,4 @@ var educationalCareersSchema = Schema({
     description: String
 })
 
-module.exports = mongoose.model('EductionalCareers', educationalCareersSchema);
+module.exports = mongoose.model('Career', educationalCareersSchema);
